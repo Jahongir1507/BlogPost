@@ -1,0 +1,17 @@
+﻿@model WeebApp.Models.AddPostViewModel
+
+@{
+}
+<h1>Add Post</h1>
+<form>
+    <div class="mb-3">
+        <label for="" class="form-label">Name your article</label>
+        <input type="email" class="form-control" asp-for="Name">
+    </div>
+</form>
+<div class="form-floating">
+    <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+    <label for="floatingTextarea">your article</label>
+</div>
+<br>
+<button type="submit" class="btn btn-primary">Submit</button>
