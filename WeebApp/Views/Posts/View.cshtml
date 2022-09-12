@@ -1,0 +1,36 @@
+﻿@model WeebApp.Models.UpdatePostViewModel
+@{
+}
+
+<h1>Edit Post</h1>
+<form method="post" action="View" class="mt-5">
+    <div class="mb-3">
+        <label for="" class="form-label">Id</label>
+        <input type="text" class="form-control" asp-for="Id" readonly>
+    </div>
+    <div class="mb-3">
+        <label for="" class="form-label">Name your article</label>
+        <input type="text" class="form-control" asp-for="Name">
+    </div>
+    <div class="mb-3">
+
+        <label for="floatingTextarea">your article</label>
+        <textarea class="form-control" id="floatingTextarea" asp-for="Text"></textarea>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary"
+            asp-action="Edit"
+            asp-controller="Posts">
+        Edit
+    </button>
+    
+    <button type="submit" class="btn btn-danger"
+            asp-action="Delete"
+            asp-controller="Posts">
+        Delete
+    </button>
+   
+
+    
+
+</form>

@@ -1,10 +1,9 @@
-﻿namespace WeebApp.Models.Domain
+﻿namespace WeebApp.Models
 {
-    public class Post
+    public class UpdatePostViewModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Text { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }

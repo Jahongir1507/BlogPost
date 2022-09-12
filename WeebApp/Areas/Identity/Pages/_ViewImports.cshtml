@@ -1,0 +1,12 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WeebApp.Areas.Identity
+@using WeebApp.Areas.Identity.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+builder.Services.Configure<RazorViewEngineOptions>
+    (options =>
+    {
+    options.AreaViewLocationFormats.Clear();
+    options.AreaViewLocationFormats.Add("/MyAreas/{2}/Views/{1}/{0}.cshtml");
+    options.AreaViewLocationFormats.Add("/MyAreas/{2}/Views/Shared/{0}.cshtml");
+    options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
+    });
