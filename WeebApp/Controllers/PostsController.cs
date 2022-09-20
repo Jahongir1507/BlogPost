@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WeebApp.Controllers
 {
@@ -18,6 +21,8 @@ namespace WeebApp.Controllers
         {
             this.applicationDbContext = applicationDbContext;
         }
+
+        
 
         [HttpGet]
        /* public async Task<IActionResult> Index()
@@ -33,13 +38,13 @@ namespace WeebApp.Controllers
                         Problem("Entity set 'ApplicationDbContext.Posts'  is null.");
         }
 
-
+        [Authorize]
         [HttpGet]
         public IActionResult Add()
         {
             return View();
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add(AddPostViewModel addPostRequest)
         {
@@ -57,7 +62,7 @@ namespace WeebApp.Controllers
             return RedirectToAction("Add");
         }
 
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> View(Guid id)
         {
@@ -78,7 +83,7 @@ namespace WeebApp.Controllers
 
             return RedirectToAction("Index");
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(UpdatePostViewModel model)
         {
@@ -95,7 +100,7 @@ namespace WeebApp.Controllers
             return RedirectToAction("Index");
 
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Delete(UpdatePostViewModel model)
         {
@@ -110,5 +115,7 @@ namespace WeebApp.Controllers
             return RedirectToAction("Index");
 
         }
+
+       
     }
 }
