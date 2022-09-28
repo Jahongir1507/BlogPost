@@ -10,6 +10,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Linq;
+using System.Security.Claims;
 
 namespace WeebApp.Controllers
 {
@@ -25,11 +28,7 @@ namespace WeebApp.Controllers
         
 
         [HttpGet]
-       /* public async Task<IActionResult> Index()
-        {
-            var posts = await applicationDbContext.Posts.ToListAsync();
-            return View(posts);
-        }*/
+       
 
         public async Task<IActionResult> Index()
         {
@@ -38,22 +37,37 @@ namespace WeebApp.Controllers
                         Problem("Entity set 'ApplicationDbContext.Posts'  is null.");
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> MyPosts()
+        {
+            return applicationDbContext.Posts != null ?                     
+                        View(await applicationDbContext.Posts.OrderByDescending(x => x.CreatedDate).Take(8).ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Posts'  is null.");
+        }
+
+
+
+
         [Authorize]
         [HttpGet]
         public IActionResult Add()
         {
             return View();
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add(AddPostViewModel addPostRequest)
         {
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var post = new Post()
             {
                 Id = Guid.NewGuid(),
                 Name = addPostRequest.Name,
                 Text = addPostRequest.Text,
-                CreatedDate = DateTime.Now
+                CreatedDate = DateTime.Now,
+                CreatorId = currentUserId
 
             };
 
@@ -75,7 +89,9 @@ namespace WeebApp.Controllers
                     Id = post.Id,
                     Name = post.Name,
                     Text = post.Text,
-                  
+                    CreatorId = post.CreatorId
+                    
+
                 };
                 return await Task.Run(() => View("View", viewModel));
             }
@@ -92,6 +108,7 @@ namespace WeebApp.Controllers
             { 
                 post.Name = model.Name;
                 post.Text = model.Text;
+                post.CreatorId = model.CreatorId;
 
                 await applicationDbContext.SaveChangesAsync();
 

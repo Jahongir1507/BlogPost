@@ -1,0 +1,31 @@
+﻿@model IEnumerable<WeebApp.Models.Domain.Post>
+@{
+}
+
+<h1>MyPosts</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Text</th>
+
+
+            <th></th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var post in Model)
+        {
+            <tr>
+                <td>@post.Id</td>
+                <td>@post.Name</td>
+                <td>@post.Text</td>
+
+                <td><a href="Posts/View/@post.Id">View</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
