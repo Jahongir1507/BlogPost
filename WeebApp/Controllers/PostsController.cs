@@ -60,7 +60,7 @@ namespace WeebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(AddPostViewModel addPostRequest)
         {
-                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var post = new Post()
             {
                 Id = Guid.NewGuid(),
@@ -75,6 +75,10 @@ namespace WeebApp.Controllers
             await applicationDbContext.SaveChangesAsync();
             return RedirectToAction("Add");
         }
+
+       
+
+
 
         [Authorize]
         [HttpGet]
@@ -108,7 +112,7 @@ namespace WeebApp.Controllers
             { 
                 post.Name = model.Name;
                 post.Text = model.Text;
-                post.CreatorId = model.CreatorId;
+               // post.CreatorId = model.CreatorId;
 
                 await applicationDbContext.SaveChangesAsync();
 

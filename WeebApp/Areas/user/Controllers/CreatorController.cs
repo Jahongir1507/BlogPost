@@ -11,6 +11,7 @@ using WeebApp.Data;
 using WeebApp.Models.Domain;
 using System.Linq;
 using System.Security.Claims;
+using WeebApp.Models;
 
 namespace WeebApp.Areas.user.Controllers
 {
@@ -54,30 +55,53 @@ namespace WeebApp.Areas.user.Controllers
             return View(post);
         }
 
-        // GET: user/Creator/Create
-        public IActionResult Create()
-        {
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
+           // GET: user/Creator/Create
+           public IActionResult Create()
+           {
+              // ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id");
+               return View();
+
         }
 
-        // POST: user/Creator/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        /*   // POST: user/Creator/Create
+           // To protect from overposting attacks, enable the specific properties you want to bind to.
+           // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+           [HttpPost]
+           [ValidateAntiForgeryToken]
+           public async Task<IActionResult> Create([Bind("Id,Name,Text,CreatedDate,CreatorId")] Post post)
+           {
+               if (ModelState.IsValid)
+               {
+                   post.Id = Guid.NewGuid();
+                   _context.Add(post);
+                   await _context.SaveChangesAsync();
+                   return RedirectToAction(nameof(Index));
+               }
+               ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", post.CreatorId);
+               return View(post);
+           }*/
+
+        [Authorize]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Text,CreatedDate,CreatorId")] Post post)
+        public async Task<IActionResult> Create(AddPostViewModel addPostRequest)
         {
-            if (ModelState.IsValid)
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var post = new Post()
             {
-                post.Id = Guid.NewGuid();
-                _context.Add(post);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", post.CreatorId);
-            return View(post);
+                Id = Guid.NewGuid(),
+                Name = addPostRequest.Name,
+                Text = addPostRequest.Text,
+                CreatedDate = DateTime.Now,
+                CreatorId = currentUserId
+
+            };
+
+            await _context.Posts.AddAsync(post);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Create");
         }
+
 
         // GET: user/Creator/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
