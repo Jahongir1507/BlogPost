@@ -9,7 +9,6 @@ using WeebApp.Models;
 
 namespace WeebApp.Controllers
 {
-   
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -22,16 +21,11 @@ namespace WeebApp.Controllers
 
         }
 
-
-
         [HttpGet]
-
-
         public async Task<IActionResult> Index()
         {
             var posts=_applicationDbContext.Posts.OrderByDescending(x=>x.CreatedDate).Take(8).ToList();
             return View(posts); 
-                      
         }
 
         public IActionResult Privacy()
