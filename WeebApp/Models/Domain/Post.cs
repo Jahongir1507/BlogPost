@@ -10,8 +10,8 @@ namespace WeebApp.Models.Domain
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         [ForeignKey("Creator")]
-        public string? CreatorId { get; set; }
-        public ApplicationUser? Creator { get; set; }
+        public string CreatorId { get; set; }
+        public ApplicationUser Creator { get; set; }
 
     }
 }

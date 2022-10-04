@@ -12,30 +12,32 @@ using WeebApp.Models.Domain;
 using System.Linq;
 using System.Security.Claims;
 using WeebApp.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace WeebApp.Areas.user.Controllers
 {
     [Area("user")]
     [Authorize(Roles="User")]
-    public class CreatorController : Controller
+    public class PostController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CreatorController(ApplicationDbContext context)
+        public PostController(ApplicationDbContext context)
         {
             _context = context;
         }
-
+       
         // GET: user/Creator
+
         public async Task<IActionResult> Index()
         {
             var curUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            var applicationDbContext = _context.Posts.Where(p => p.CreatorId == curUserId);
-           
-            return View(await applicationDbContext.ToListAsync());
-        }
 
+            var UserPost = _context.Posts.OrderByDescending(p => p.CreatedDate).Take(8);
+            var UserPost_2 = UserPost.Where(p => p.CreatorId == curUserId);
+            return View(await UserPost_2.ToListAsync());
+        }
         // GET: user/Creator/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -51,38 +53,17 @@ namespace WeebApp.Areas.user.Controllers
             {
                 return NotFound();
             }
-
             return View(post);
-        }
+            }
 
            // GET: user/Creator/Create
            public IActionResult Create()
            {
-              // ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id");
-               return View();
+                 return View();
+           }
 
-        }
-
-
-        /*   // POST: user/Creator/Create
-           // To protect from overposting attacks, enable the specific properties you want to bind to.
-           // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-           [HttpPost]
-           [ValidateAntiForgeryToken]
-           public async Task<IActionResult> Create([Bind("Id,Name,Text,CreatedDate,CreatorId")] Post post)
-           {
-               if (ModelState.IsValid)
-               {
-                   post.Id = Guid.NewGuid();
-                   _context.Add(post);
-                   await _context.SaveChangesAsync();
-                   return RedirectToAction(nameof(Index));
-               }
-               ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", post.CreatorId);
-               return View(post);
-           }*/
-
-        [Authorize]
+          // POST: user/Creator/Create
+         
         [HttpPost]
         public async Task<IActionResult> Create(AddPostViewModel addPostRequest)
         {
@@ -102,7 +83,6 @@ namespace WeebApp.Areas.user.Controllers
             return RedirectToAction("Create");
         }
 
-
         // GET: user/Creator/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
@@ -116,7 +96,7 @@ namespace WeebApp.Areas.user.Controllers
             {
                 return NotFound();
             }
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", post.CreatorId);
+           
             return View(post);
         }
 
@@ -125,7 +105,7 @@ namespace WeebApp.Areas.user.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Text,CreatedDate,CreatorId")] Post post)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Text,CreatedDate,CreatorId")] UpdatePostViewModel post)
         {
             if (id != post.Id)
             {
@@ -152,7 +132,7 @@ namespace WeebApp.Areas.user.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", post.CreatorId);
+          //  ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", post.CreatorId);
             return View(post);
         }
 
@@ -198,5 +178,6 @@ namespace WeebApp.Areas.user.Controllers
         {
           return _context.Posts.Any(e => e.Id == id);
         }
+
     }
 }

@@ -25,19 +25,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="Index">Posts</a>
-                        </li>
+                        
                         @if (User.IsInRole("User"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="Add">Add Post</a>
+                                <a class="nav-link text-dark" asp-area="user" asp-controller="Post" asp-action="Create">Add Post</a>
                             </li>
-                        }
-                        @if (User.IsInRole("User"))
-                       { 
+               
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="user" asp-controller="Creator" asp-action="Index">MyPosts</a>
+                            <a class="nav-link text-dark" asp-area="user" asp-controller="Post" asp-action="Index">MyPosts</a>
                         </li>
                        }
                     </ul>
