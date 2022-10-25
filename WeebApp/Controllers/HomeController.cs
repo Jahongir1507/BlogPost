@@ -11,7 +11,6 @@ using WeebApp.Models;
 
 namespace WeebApp.Controllers
 {
-   
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -23,8 +22,6 @@ namespace WeebApp.Controllers
             _applicationDbContext = applicationDbContext;
 
         }
-
-
 
         [HttpGet]
 

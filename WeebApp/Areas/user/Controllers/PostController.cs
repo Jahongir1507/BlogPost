@@ -38,7 +38,6 @@ namespace WeebApp.Areas.user.Controllers
             var UserPost = _context.Posts.OrderByDescending(p => p.CreatedDate).Take(8);
             var UserPost_2 = UserPost.Where(p => p.CreatorId == curUserId);
             return View(await UserPost_2.ToListAsync());
-
         }
         // GET: user/Creator/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -65,19 +64,22 @@ namespace WeebApp.Areas.user.Controllers
            }
 
           // POST: user/Creator/Create
+         
         [HttpPost]
         public async Task<IActionResult> Create(string submitBtn, AddPostViewModel addPostRequest)
         {
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var post = new Post()
+            if (ModelState.IsValid)
             {
-                Id = Guid.NewGuid(),
-                Name = addPostRequest.Name,
-                Text = addPostRequest.Text,
-                CreatedDate = DateTime.Now,
-                CreatorId = currentUserId,
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var post = new Post()
+                {
+                    Name = addPostRequest.Name,
+                    Text = addPostRequest.Text,
+                    CreatedDate = DateTime.Now,
+                    CreatorId = currentUserId
 
-            };
+                };
+            }
 
             switch (submitBtn)
             {
@@ -122,23 +124,52 @@ namespace WeebApp.Areas.user.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, string submitBtn, [Bind("Id,Name,Text,CreatedDate,CreatorId")] UpdatePostViewModel updatePostVM)
         {
-            var curPost = await _context.Posts.FirstAsync(p => p.Id == id);
-            curPost.Name = updatePostVM.Name;
-            curPost.Text = updatePostVM.Text;
-            switch (submitBtn)
+            var post = await _context.Posts.FindAsync(id);
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (id != postUpdateVM.Id)
             {
-                case "Save as draft":
-                    curPost.StatusId = Enums.StatusEnum.Draft;
-                    break;
-                case "Submit to check":
-                    curPost.StatusId = Enums.StatusEnum.WaitingForApproval;
-                    break;
+                return NotFound();
             }
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                     post.Name = postUpdateVM.Name;
+                     post.Text = postUpdateVM.Text;
+
+                    switch (submitBtn)
+                    {
+                        case "Save as draft":
+                            curPost.StatusId = Enums.StatusEnum.Draft;
+                            break;
+                        case "Submit to check":
+                            curPost.StatusId = Enums.StatusEnum.WaitingForApproval;
+                            break;
+                    }
+                    _context.Update(post);
+                    await _context.SaveChangesAsync();
+                }
+
+               catch (DbUpdateConcurrencyException)
+                {
+                    if (!PostExists(post.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
             }
-            // GET: user/Creator/Delete/5
-            public async Task<IActionResult> Delete(Guid? id)
+            return View(post);
+
+        }
+
+        // GET: user/Creator/Delete/5
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null || _context.Posts == null)
             {

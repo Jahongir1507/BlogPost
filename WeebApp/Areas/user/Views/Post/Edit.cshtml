@@ -8,6 +8,7 @@
 
 <h4>Post</h4>
 <hr />
+<form method="post" action="Edit">
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -25,14 +26,13 @@
             </div>
             <br>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-                 <input type="submit" name="submitbtn" value="Create as draft" class="btn btn-primary" />
-              <input type="submit" name="submitbtn" value="Submit to check" class="btn btn-primary" />
-              </div>
+                <input type="submit" name="submitbtn" value="Create as draft" class="btn btn-primary" />
+                <input type="submit" name="submitbtn" value="Submit to check" class="btn btn-primary" />
+            </div>
         </form>
     </div>
 </div>
-
+</form>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
