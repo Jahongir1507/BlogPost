@@ -21,16 +21,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.Configure<IdentityOptions>(options =>
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
-
 builder.Services.AddControllersWithViews();
 
 //builder.Services.AddScoped<ApplicationDbContext>();
-
-/*builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("RequireAdministratorRole",
-         policy => policy.RequireRole("Administrator"));
-});*/
 
 var app = builder.Build();
 
@@ -57,6 +50,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "creatorArea",
     pattern: "{area:exists}/{controller=Creator}/{action=Index}/{id?}");
+
 
 app.MapControllerRoute(
     name: "default",

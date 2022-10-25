@@ -14,6 +14,7 @@ using System.Security.Claims;
 using WeebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace WeebApp.Areas.user.Controllers
 {
@@ -37,6 +38,7 @@ namespace WeebApp.Areas.user.Controllers
             var UserPost = _context.Posts.OrderByDescending(p => p.CreatedDate).Take(8);
             var UserPost_2 = UserPost.Where(p => p.CreatorId == curUserId);
             return View(await UserPost_2.ToListAsync());
+
         }
         // GET: user/Creator/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -63,9 +65,8 @@ namespace WeebApp.Areas.user.Controllers
            }
 
           // POST: user/Creator/Create
-         
         [HttpPost]
-        public async Task<IActionResult> Create(AddPostViewModel addPostRequest)
+        public async Task<IActionResult> Create(string submitBtn, AddPostViewModel addPostRequest)
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var post = new Post()
@@ -74,13 +75,23 @@ namespace WeebApp.Areas.user.Controllers
                 Name = addPostRequest.Name,
                 Text = addPostRequest.Text,
                 CreatedDate = DateTime.Now,
-                CreatorId = currentUserId
+                CreatorId = currentUserId,
 
             };
 
+            switch (submitBtn)
+            {
+                case "Create as draft":
+                    post.StatusId = Enums.StatusEnum.Draft;
+                    break;
+                case "Submit to check":
+                    post.StatusId = Enums.StatusEnum.WaitingForApproval;
+                    break;
+            }
+
             await _context.Posts.AddAsync(post);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Create");
+            return RedirectToAction("Index");
         }
 
         // GET: user/Creator/Edit/5
@@ -96,7 +107,11 @@ namespace WeebApp.Areas.user.Controllers
             {
                 return NotFound();
             }
-           
+            if (post.StatusId == Enums.StatusEnum.WaitingForApproval)
+            {
+                return NotFound();
+            }
+
             return View(post);
         }
 
@@ -105,39 +120,25 @@ namespace WeebApp.Areas.user.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Text,CreatedDate,CreatorId")] UpdatePostViewModel post)
+        public async Task<IActionResult> Edit(Guid id, string submitBtn, [Bind("Id,Name,Text,CreatedDate,CreatorId")] UpdatePostViewModel updatePostVM)
         {
-            if (id != post.Id)
+            var curPost = await _context.Posts.FirstAsync(p => p.Id == id);
+            curPost.Name = updatePostVM.Name;
+            curPost.Text = updatePostVM.Text;
+            switch (submitBtn)
             {
-                return NotFound();
+                case "Save as draft":
+                    curPost.StatusId = Enums.StatusEnum.Draft;
+                    break;
+                case "Submit to check":
+                    curPost.StatusId = Enums.StatusEnum.WaitingForApproval;
+                    break;
             }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(post);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PostExists(post.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
             }
-          //  ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", post.CreatorId);
-            return View(post);
-        }
-
-        // GET: user/Creator/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+            // GET: user/Creator/Delete/5
+            public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null || _context.Posts == null)
             {
