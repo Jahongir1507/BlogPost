@@ -71,7 +71,7 @@ namespace WeebApp.Areas.user.Controllers
             if (ModelState.IsValid)
             {
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var post = new Post()
+                Post post = new Post()
                 {
                     Name = addPostRequest.Name,
                     Text = addPostRequest.Text,
@@ -79,7 +79,6 @@ namespace WeebApp.Areas.user.Controllers
                     CreatorId = currentUserId
 
                 };
-            }
 
             switch (submitBtn)
             {
@@ -93,6 +92,7 @@ namespace WeebApp.Areas.user.Controllers
 
             await _context.Posts.AddAsync(post);
             await _context.SaveChangesAsync();
+            }
             return RedirectToAction("Index");
         }
 
@@ -126,25 +126,25 @@ namespace WeebApp.Areas.user.Controllers
         {
             var post = await _context.Posts.FindAsync(id);
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (id != postUpdateVM.Id)
+            if (id != updatePostVM.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && post!= null)
             {
                 try
                 {
-                     post.Name = postUpdateVM.Name;
-                     post.Text = postUpdateVM.Text;
+                     post.Name = updatePostVM.Name;
+                     post.Text = updatePostVM.Text;
 
                     switch (submitBtn)
                     {
                         case "Save as draft":
-                            curPost.StatusId = Enums.StatusEnum.Draft;
+                            post.StatusId = Enums.StatusEnum.Draft;
                             break;
                         case "Submit to check":
-                            curPost.StatusId = Enums.StatusEnum.WaitingForApproval;
+                            post.StatusId = Enums.StatusEnum.WaitingForApproval;
                             break;
                     }
                     _context.Update(post);
