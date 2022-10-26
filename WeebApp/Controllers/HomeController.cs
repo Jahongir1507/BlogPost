@@ -27,7 +27,8 @@ namespace WeebApp.Controllers
 
         public IActionResult Index()
         {
-            var posts = _applicationDbContext.Posts.OrderByDescending(p => p.CreatedDate).Where(p => p.StatusId == Enums.StatusEnum.Published).Take(8).ToList();
+            var posts = _applicationDbContext.Posts.OrderByDescending(p => p.CreatedDate).Where(p => p.StatusId == 
+            Enums.StatusEnum.Published).Take(8).ToList();
             return View(posts);
         }
         public IActionResult Privacy()

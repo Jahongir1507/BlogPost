@@ -35,9 +35,8 @@ namespace WeebApp.Areas.user.Controllers
         {
             var curUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var UserPost = _context.Posts.OrderByDescending(p => p.CreatedDate).Take(8);
-            var UserPost_2 = UserPost.Where(p => p.CreatorId == curUserId);
-            return View(await UserPost_2.ToListAsync());
+            var UserPost = _context.Posts.Where(p => p.CreatorId == curUserId).OrderByDescending(p => p.CreatedDate).Take(8);
+            return View(await UserPost.ToListAsync());
         }
         // GET: user/Creator/Details/5
         public async Task<IActionResult> Details(Guid? id)
