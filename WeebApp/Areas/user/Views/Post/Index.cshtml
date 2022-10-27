@@ -24,7 +24,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Creator)
             </th>
-           
+            <th>
+                @Html.DisplayNameFor(model => model.StatusId)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -44,10 +46,21 @@
                 @Html.DisplayFor(modelItem => item.CreatorId)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @Html.DisplayFor(modelItem => item.StatusId)
             </td>
+        <td>
+                    @if (item.StatusId != WeebApp.Enums.StatusEnum.WaitingForApproval)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+
+                    }
+                    |<a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+
+                    @if (item.StatusId != WeebApp.Enums.StatusEnum.WaitingForApproval)
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
         </tr>
 }
     </tbody>

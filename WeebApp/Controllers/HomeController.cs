@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Data;
 using System.Diagnostics;
 using WeebApp.Data;
 using WeebApp.Models;
+
 
 namespace WeebApp.Controllers
 {
@@ -17,17 +19,18 @@ namespace WeebApp.Controllers
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext)
         {
             _logger = logger;
-            _applicationDbContext = applicationDbContext;    
+            _applicationDbContext = applicationDbContext;
 
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            var posts=_applicationDbContext.Posts.OrderByDescending(x=>x.CreatedDate).Take(8).ToList();
-            return View(posts); 
-        }
 
+        public IActionResult Index()
+        {
+            var posts = _applicationDbContext.Posts.OrderByDescending(p => p.CreatedDate).Where(p => p.StatusId == 
+            Enums.StatusEnum.Published).Take(8).ToList();
+            return View(posts);
+        }
         public IActionResult Privacy()
         {
             return View();

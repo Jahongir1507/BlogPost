@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeebApp.Data;
 
@@ -11,9 +12,10 @@ using WeebApp.Data;
 namespace WeebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221014054420_added_StatusTable")]
+    partial class added_StatusTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,9 +243,6 @@ namespace WeebApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -252,30 +251,7 @@ namespace WeebApp.Migrations
 
                     b.HasIndex("CreatorId");
 
-                    b.HasIndex("StatusId");
-
                     b.ToTable("Posts");
-                    b.HasData(
-                      new
-                      {
-                          Id = 1,
-                          Name = "Draft"
-                      },
-                      new
-                      {
-                          Id = 2,
-                          Name = "Waiting for approval"
-                      },
-                      new
-                      {
-                          Id = 3,
-                          Name = "Published"
-                      },
-                      new
-                      {
-                          Id = 4,
-                          Name = "Rejected"
-                      });
                 });
 
             modelBuilder.Entity("WeebApp.Models.Status", b =>
@@ -351,15 +327,7 @@ namespace WeebApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WeebApp.Models.Status", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Creator");
-
-                    b.Navigation("Status");
                 });
 #pragma warning restore 612, 618
         }

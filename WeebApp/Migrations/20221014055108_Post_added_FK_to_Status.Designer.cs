@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeebApp.Data;
 
@@ -11,9 +12,10 @@ using WeebApp.Data;
 namespace WeebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221014055108_Post_added_FK_to_Status")]
+    partial class Post_added_FK_to_Status
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,27 +257,6 @@ namespace WeebApp.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("Posts");
-                    b.HasData(
-                      new
-                      {
-                          Id = 1,
-                          Name = "Draft"
-                      },
-                      new
-                      {
-                          Id = 2,
-                          Name = "Waiting for approval"
-                      },
-                      new
-                      {
-                          Id = 3,
-                          Name = "Published"
-                      },
-                      new
-                      {
-                          Id = 4,
-                          Name = "Rejected"
-                      });
                 });
 
             modelBuilder.Entity("WeebApp.Models.Status", b =>

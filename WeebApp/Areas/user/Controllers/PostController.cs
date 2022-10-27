@@ -35,9 +35,8 @@ namespace WeebApp.Areas.user.Controllers
         {
             var curUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var UserPost = _context.Posts.OrderByDescending(p => p.CreatedDate);
-            var UserPost_2 = UserPost.Where(p => p.CreatorId == curUserId);
-            return View(await UserPost_2.ToListAsync());
+            var UserPost = _context.Posts.Where(p => p.CreatorId == curUserId).OrderByDescending(p => p.CreatedDate).Take(8);
+            return View(await UserPost.ToListAsync());
         }
         // GET: user/Creator/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -63,15 +62,15 @@ namespace WeebApp.Areas.user.Controllers
                  return View();
            }
 
-        // POST: user/Creator/Create
-
+          // POST: user/Creator/Create
+         
         [HttpPost]
-        public async Task<IActionResult> Create(AddPostViewModel addPostRequest)
+        public async Task<IActionResult> Create(string submitBtn, AddPostViewModel addPostRequest)
         {
             if (ModelState.IsValid)
             {
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var post = new Post()
+                Post post = new Post()
                 {
                     Name = addPostRequest.Name,
                     Text = addPostRequest.Text,
@@ -79,17 +78,21 @@ namespace WeebApp.Areas.user.Controllers
                     CreatorId = currentUserId
 
                 };
-                //_context.Posts.Add(post);
-                await _context.Posts.AddAsync(post);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+            switch (submitBtn)
+            {
+                case "Create as draft":
+                    post.StatusId = Enums.StatusEnum.Draft;
+                    break;
+                case "Submit to check":
+                    post.StatusId = Enums.StatusEnum.WaitingForApproval;
+                    break;
             }
 
-
-
-            // return RedirectToAction("Create");
-              return RedirectToAction(nameof(Index));
-           // return View(addPostRequest);
+            await _context.Posts.AddAsync(post);
+            await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
         }
 
         // GET: user/Creator/Edit/5
@@ -105,7 +108,11 @@ namespace WeebApp.Areas.user.Controllers
             {
                 return NotFound();
             }
-           
+            if (post.StatusId == Enums.StatusEnum.WaitingForApproval)
+            {
+                return NotFound();
+            }
+
             return View(post);
         }
 
@@ -114,21 +121,31 @@ namespace WeebApp.Areas.user.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, UpdatePostViewModel postUpdateVM)
+        public async Task<IActionResult> Edit(Guid id, string submitBtn, [Bind("Id,Name,Text,CreatedDate,CreatorId")] UpdatePostViewModel updatePostVM)
         {
             var post = await _context.Posts.FindAsync(id);
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (id != postUpdateVM.Id)
+            if (id != updatePostVM.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && post!= null)
             {
                 try
                 {
-                     post.Name = postUpdateVM.Name;
-                     post.Text = postUpdateVM.Text;
+                     post.Name = updatePostVM.Name;
+                     post.Text = updatePostVM.Text;
+
+                    switch (submitBtn)
+                    {
+                        case "Save as draft":
+                            post.StatusId = Enums.StatusEnum.Draft;
+                            break;
+                        case "Submit to check":
+                            post.StatusId = Enums.StatusEnum.WaitingForApproval;
+                            break;
+                    }
                     _context.Update(post);
                     await _context.SaveChangesAsync();
                 }
