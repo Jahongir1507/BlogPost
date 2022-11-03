@@ -15,6 +15,8 @@ using WeebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using MvcApp.Services.Users;
+using WeebApp.Enums;
 
 namespace WeebApp.Areas.user.Controllers
 {
@@ -22,40 +24,37 @@ namespace WeebApp.Areas.user.Controllers
     [Authorize(Roles="User")]
     public class PostController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private UserPostServices _userPostServices;
 
         public PostController(ApplicationDbContext context)
         {
-            _context = context;
+            _userPostServices = new UserPostServices(context);
         }
        
         // GET: user/Creator
 
         public async Task<IActionResult> Index()
         {
-            var curUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var UserPost = _context.Posts.Where(p => p.CreatorId == curUserId).OrderByDescending(p => p.CreatedDate).Take(8);
-            return View(await UserPost.ToListAsync());
+          var curUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var curUserPost = _userPostServices.GetByCreatorId(curUserId);
+            return View(curUserPost);
         }
         // GET: user/Creator/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.Posts == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var post = await _context.Posts
-                .Include(p => p.Creator)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var post = _userPostServices.Details((Guid)id);
             if (post == null)
             {
                 return NotFound();
             }
             return View(post);
-            }
-
+        }
+       
            // GET: user/Creator/Create
            public IActionResult Create()
            {
@@ -89,8 +88,7 @@ namespace WeebApp.Areas.user.Controllers
                     break;
             }
 
-            await _context.Posts.AddAsync(post);
-            await _context.SaveChangesAsync();
+       var addedPost = _userPostServices.AddPost(post);
             }
             return RedirectToAction("Index");
         }
@@ -98,12 +96,12 @@ namespace WeebApp.Areas.user.Controllers
         // GET: user/Creator/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Posts == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var post = await _context.Posts.FindAsync(id);
+            var post = _userPostServices.GetById(id.Value);
             if (post == null)
             {
                 return NotFound();
@@ -123,8 +121,8 @@ namespace WeebApp.Areas.user.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, string submitBtn, [Bind("Id,Name,Text,CreatedDate,CreatorId")] UpdatePostViewModel updatePostVM)
         {
-            var post = await _context.Posts.FindAsync(id);
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var post = _userPostServices.GetById(id);
+           // var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (id != updatePostVM.Id)
             {
                 return NotFound();
@@ -146,13 +144,12 @@ namespace WeebApp.Areas.user.Controllers
                             post.StatusId = Enums.StatusEnum.WaitingForApproval;
                             break;
                     }
-                    _context.Update(post);
-                    await _context.SaveChangesAsync();
+                  _userPostServices.EditPost(post);
                 }
 
                catch (DbUpdateConcurrencyException)
                 {
-                    if (!PostExists(post.Id))
+                    if (!_userPostServices.PostExists(updatePostVM.Id))
                     {
                         return NotFound();
                     }
@@ -170,16 +167,17 @@ namespace WeebApp.Areas.user.Controllers
         // GET: user/Creator/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.Posts == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var post = await _context.Posts
-                .Include(p => p.Creator)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (post == null)
+            var post = _userPostServices.GetById(id.Value);
+            if (post.StatusId == StatusEnum.WaitingForApproval)
             {
+                return NotFound();
+            }
+            if(post == null) 
+            { 
                 return NotFound();
             }
 
@@ -191,24 +189,14 @@ namespace WeebApp.Areas.user.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.Posts == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Posts'  is null.");
-            }
-            var post = await _context.Posts.FindAsync(id);
+          var post = _userPostServices.GetById(id);
             if (post != null)
             {
-                _context.Posts.Remove(post);
+                _userPostServices.Delete(post);
             }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private bool PostExists(Guid id)
-        {
-          return _context.Posts.Any(e => e.Id == id);
-        }
-
+  
+     
     }
 }
