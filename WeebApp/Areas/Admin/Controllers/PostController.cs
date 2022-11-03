@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WeebApp.Data;
 using Microsoft.AspNetCore.Authorization;
-
+using WeebApp.Services.Admin;
 
 namespace WeebApp.Areas.Admin.Controllers
 {
@@ -15,17 +15,17 @@ namespace WeebApp.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class PostController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private  AdminPostServices _postServices;
 
         public PostController(ApplicationDbContext context)
         {
-            _context = context;
+            _postServices = new AdminPostServices(context);
         }
 
         // GET: Admin/Post
         public IActionResult Index()
         {
-            var posts = _context.Posts.OrderByDescending(p => p.CreatedDate).Where(p => p.StatusId == Enums.StatusEnum.WaitingForApproval).ToList();
+            var posts = _postServices.GetAll();
             return View(posts);
         }
 
@@ -33,7 +33,7 @@ namespace WeebApp.Areas.Admin.Controllers
  
         public IActionResult Details(Guid id)
         {
-            var post = _context.Posts.Include(p => p.Status).FirstOrDefault(p => p.Id == id);
+            var post = _postServices.GetById(id);
             if (post == null)
             {
                 return NotFound();
@@ -44,28 +44,16 @@ namespace WeebApp.Areas.Admin.Controllers
  [HttpPost]
         public IActionResult Approve(Guid? id)
         {
-            var post = _context.Posts.FirstOrDefault(p => p.Id == id);
-            if (id == null || post == null)
-            {
-                return NotFound();
-            }
-            post.StatusId = Enums.StatusEnum.Published;
-            _context.SaveChanges();
-            return Ok();
+            var post = _postServices.GetById((Guid)id);
+            _postServices.Approve(post);
+         return Ok();
         }
 
         [HttpPost]
         public IActionResult Reject(Guid? id)
         {
-            var post = _context.Posts.FirstOrDefault(p => p.Id == id);
-            if (id == null || post == null)
-            {
-                return NotFound();
-            }
-
-            post.StatusId = Enums.StatusEnum.Rejected;
-            _context.SaveChanges();
-
+         var post = _postServices.GetById((Guid)id);
+            _postServices.Reject(post);
             return Ok();
 
         }
