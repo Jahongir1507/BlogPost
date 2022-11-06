@@ -15,27 +15,28 @@ using WeebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using MvcApp.Services.Users;
+using WeebApp.Services.Users;
 using WeebApp.Enums;
+using WeebApp.Services.Interfaces;
 
 namespace WeebApp.Areas.user.Controllers
 {
     [Area("user")]
-    [Authorize(Roles="User")]
+    [Authorize(Roles = "User")]
     public class PostController : Controller
     {
-        private UserPostServices _userPostServices;
+        private IUserPostServices _userPostServices;
 
-        public PostController(ApplicationDbContext context)
+        public PostController(IUserPostServices userPostServices)
         {
-            _userPostServices = new UserPostServices(context);
+            _userPostServices = userPostServices;
         }
-       
+
         // GET: user/Creator
 
         public async Task<IActionResult> Index()
         {
-          var curUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var curUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var curUserPost = _userPostServices.GetByCreatorId(curUserId);
             return View(curUserPost);
         }
@@ -54,21 +55,21 @@ namespace WeebApp.Areas.user.Controllers
             }
             return View(post);
         }
-       
-           // GET: user/Creator/Create
-           public IActionResult Create()
-           {
-                 return View();
-           }
 
-          // POST: user/Creator/Create
-         
+        // GET: user/Creator/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: user/Creator/Create
+
         [HttpPost]
         public async Task<IActionResult> Create(string submitBtn, AddPostViewModel addPostRequest)
         {
             if (ModelState.IsValid)
             {
-                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 Post post = new Post()
                 {
                     Name = addPostRequest.Name,
@@ -78,17 +79,17 @@ namespace WeebApp.Areas.user.Controllers
 
                 };
 
-            switch (submitBtn)
-            {
-                case "Create as draft":
-                    post.StatusId = Enums.StatusEnum.Draft;
-                    break;
-                case "Submit to check":
-                    post.StatusId = Enums.StatusEnum.WaitingForApproval;
-                    break;
-            }
+                switch (submitBtn)
+                {
+                    case "Create as draft":
+                        post.StatusId = Enums.StatusEnum.Draft;
+                        break;
+                    case "Submit to check":
+                        post.StatusId = Enums.StatusEnum.WaitingForApproval;
+                        break;
+                }
 
-       var addedPost = _userPostServices.AddPost(post);
+                var addedPost = _userPostServices.AddPost(post);
             }
             return RedirectToAction("Index");
         }
@@ -122,18 +123,18 @@ namespace WeebApp.Areas.user.Controllers
         public async Task<IActionResult> Edit(Guid id, string submitBtn, [Bind("Id,Name,Text,CreatedDate,CreatorId")] UpdatePostViewModel updatePostVM)
         {
             var post = _userPostServices.GetById(id);
-           // var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (id != updatePostVM.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid && post!= null)
+            if (ModelState.IsValid && post != null)
             {
                 try
                 {
-                     post.Name = updatePostVM.Name;
-                     post.Text = updatePostVM.Text;
+                    post.Name = updatePostVM.Name;
+                    post.Text = updatePostVM.Text;
 
                     switch (submitBtn)
                     {
@@ -144,10 +145,10 @@ namespace WeebApp.Areas.user.Controllers
                             post.StatusId = Enums.StatusEnum.WaitingForApproval;
                             break;
                     }
-                  _userPostServices.EditPost(post);
+                    _userPostServices.EditPost(post);
                 }
 
-               catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException)
                 {
                     if (!_userPostServices.PostExists(updatePostVM.Id))
                     {
@@ -176,8 +177,8 @@ namespace WeebApp.Areas.user.Controllers
             {
                 return NotFound();
             }
-            if(post == null) 
-            { 
+            if (post == null)
+            {
                 return NotFound();
             }
 
@@ -189,14 +190,14 @@ namespace WeebApp.Areas.user.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-          var post = _userPostServices.GetById(id);
+            var post = _userPostServices.GetById(id);
             if (post != null)
             {
                 _userPostServices.Delete(post);
             }
             return RedirectToAction(nameof(Index));
         }
-  
-     
+
+
     }
 }

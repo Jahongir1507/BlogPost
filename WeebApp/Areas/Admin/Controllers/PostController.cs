@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WeebApp.Data;
 using Microsoft.AspNetCore.Authorization;
 using WeebApp.Services.Admin;
+using WeebApp.Services.Interfaces;
 
 namespace WeebApp.Areas.Admin.Controllers
 {
@@ -15,11 +16,12 @@ namespace WeebApp.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class PostController : Controller
     {
-        private  AdminPostServices _postServices;
+        private  IAdminPostServices _postServices;
 
-        public PostController(ApplicationDbContext context)
+        public PostController(IAdminPostServices postServices)
         {
-            _postServices = new AdminPostServices(context);
+            //_postServices = new AdminPostServices(context);
+            _postServices = postServices;
         }
 
         // GET: Admin/Post

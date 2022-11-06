@@ -5,10 +5,11 @@ using System;
 using WeebApp.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using WeebApp.Services.Interfaces;
 
 namespace WeebApp.Services.Admin
 {
-    public class AdminPostServices
+    public class AdminPostServices : IAdminPostServices
     {
         public ApplicationDbContext _context;
 
