@@ -7,19 +7,22 @@ using System.Data;
 using System.Diagnostics;
 using WeebApp.Data;
 using WeebApp.Models;
-
+using WeebApp.Services.Interfaces;
+using WeebApp.Services.Posts;
 
 namespace WeebApp.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _applicationDbContext;
+       // private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IPostServices _postServices;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext)
+
+        public HomeController(ILogger<HomeController> logger, IPostServices postServices)
         {
             _logger = logger;
-            _applicationDbContext = applicationDbContext;
+            _postServices = postServices;
 
         }
 
@@ -27,8 +30,9 @@ namespace WeebApp.Controllers
 
         public IActionResult Index()
         {
-            var posts = _applicationDbContext.Posts.OrderByDescending(p => p.CreatedDate).Where(p => p.StatusId == 
-            Enums.StatusEnum.Published).Take(8).ToList();
+            /*var posts = _postServices.Posts.OrderByDescending(p => p.CreatedDate).Where(p => p.StatusId == 
+            Enums.StatusEnum.Published).Take(8).ToList();*/
+            var posts = _postServices.GetLastEight();
             return View(posts);
         }
         public IActionResult Privacy()

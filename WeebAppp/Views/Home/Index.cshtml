@@ -1,0 +1,33 @@
+﻿@model List<WeebApp.Models.Domain.Post>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1>Posts</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Text</th>
+            <th>Creator</th>
+
+            <th></th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var post in Model)
+        {
+            <tr>
+                <td>@post.Id</td>
+                <td>@post.Name</td>
+                <td>@post.Text</td>
+                <td>@post.CreatorId</td>
+
+                @*  <td><a href="Posts/Details/@post.Id">Details</a></td>*@
+            </tr>
+        }
+    </tbody>
+</table>
