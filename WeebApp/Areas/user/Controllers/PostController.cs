@@ -123,7 +123,6 @@ namespace WeebApp.Areas.user.Controllers
         public async Task<IActionResult> Edit(Guid id, string submitBtn, [Bind("Id,Name,Text,CreatedDate,CreatorId")] UpdatePostViewModel updatePostVM)
         {
             var post = _userPostServices.GetById(id);
-            // var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (id != updatePostVM.Id)
             {
                 return NotFound();

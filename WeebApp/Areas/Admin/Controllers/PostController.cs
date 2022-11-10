@@ -20,7 +20,6 @@ namespace WeebApp.Areas.Admin.Controllers
 
         public PostController(IAdminPostServices postServices)
         {
-            //_postServices = new AdminPostServices(context);
             _postServices = postServices;
         }
 

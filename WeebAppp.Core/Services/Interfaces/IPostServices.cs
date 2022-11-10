@@ -6,6 +6,5 @@ namespace WeebApp.Services.Interfaces
     {
         List<Post> GetLastEight();
         
-        //Post GetById(Guid id);
     }
 }

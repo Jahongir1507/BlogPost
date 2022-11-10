@@ -2,7 +2,6 @@
 using WeebApp.Data;
 using WeebApp.Models.Domain;
 using WeebApp.Services.Interfaces;
-//using NuGet.Versioning;
 using System;
 using WeebApp.Services.Posts;
 
@@ -10,23 +9,10 @@ namespace WeebApp.Services.Posts
 {
     public class PostServices : BasePostServices, IPostServices
     {
-        //private readonly ApplicationDbContext _context;
-
-        /* public PostServices(ApplicationDbContext context)
-         {
-             _context = context;
-         }*/
-        public PostServices(ApplicationDbContext context) : base(context)
+       public PostServices(ApplicationDbContext context) : base(context)
         {
 
         }
-
-        /* public Post GetById(Guid id)
-         {
-             var post = _context.Posts.Include(p => p.Status)
-                 .Include(p => p.Creator).FirstOrDefault(p => p.Id == id);
-             return post;
-         }*/
 
         public List<Post> GetLastEight()
         {

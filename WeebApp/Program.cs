@@ -26,9 +26,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserPostServices, UserPostServices>();
 builder.Services.AddScoped<IAdminPostServices, AdminPostServices>();
 builder.Services.AddScoped<IPostServices, PostServices>();
-
-//builder.Services.AddScoped<ApplicationDbContext>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
