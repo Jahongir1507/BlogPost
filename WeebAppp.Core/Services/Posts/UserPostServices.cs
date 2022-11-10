@@ -4,7 +4,7 @@ using WeebApp.Models;
 using WeebApp.Models.Domain;
 using WeebApp.Services.Interfaces;
 
-namespace WeebApp.Services.Users
+namespace WeebApp.Services.Posts
 {
     public class UserPostServices : IUserPostServices
     {
@@ -48,7 +48,7 @@ namespace WeebApp.Services.Users
         {
             _context.Posts.Remove(post);
             _context.SaveChanges();
-           
+
         }
         public bool PostExists(Guid id)
         {

@@ -4,10 +4,10 @@ using WeebApp.Models;
 using System;
 using WeebApp.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+//using Microsoft.CodeAnalysis.CSharp.Syntax;
 using WeebApp.Services.Interfaces;
 
-namespace WeebApp.Services.Admin
+namespace WeebApp.Services.Posts
 {
     public class AdminPostServices : IAdminPostServices
     {
@@ -20,7 +20,7 @@ namespace WeebApp.Services.Admin
 
         public List<Post> GetAll()
         {
-           // var posts = _context.Posts.Include(p => p.Status).Where(p => p.StatusId != Enums.StatusEnum.Draft).ToList();
+            // var posts = _context.Posts.Include(p => p.Status).Where(p => p.StatusId != Enums.StatusEnum.Draft).ToList();
             var posts = _context.Posts.OrderByDescending(p => p.CreatedDate).Where(p => p.StatusId == Enums.StatusEnum.WaitingForApproval).ToList();
             return posts;
         }
@@ -28,10 +28,10 @@ namespace WeebApp.Services.Admin
         {
             var post = _context.Posts.Include(p => p.Status).FirstOrDefault(p => p.Id == id);
             return post;
-          
+
         }
 
-      public void Approve(Post post)
+        public void Approve(Post post)
         {
             post.StatusId = Enums.StatusEnum.Published;
             _context.SaveChanges();

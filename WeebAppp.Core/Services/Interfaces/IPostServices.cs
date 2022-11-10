@@ -2,10 +2,10 @@
 
 namespace WeebApp.Services.Interfaces
 {
-    public interface IPostServices
+    public interface IPostServices : IBasePostServices
     {
         List<Post> GetLastEight();
         
-        Post GetById(Guid id);
+        //Post GetById(Guid id);
     }
 }

@@ -15,7 +15,7 @@ using WeebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using WeebApp.Services.Users;
+using WeebApp.Services.Posts;
 using WeebApp.Enums;
 using WeebApp.Services.Interfaces;
 

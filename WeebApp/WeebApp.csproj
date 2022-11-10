@@ -24,4 +24,9 @@
     <Folder Include="Areas\user\Models\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WeebAppp.Core\WeebAppp.Core.csproj" />
+    <ProjectReference Include="..\WeebbApp.Domain\WeebbApp.Dom.csproj" />
+  </ItemGroup>
+
 </Project>

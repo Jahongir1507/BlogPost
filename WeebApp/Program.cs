@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WeebApp.Data;
 using WeebApp.Models;
-using WeebApp.Services.Admin;
 using WeebApp.Services.Interfaces;
-using WeebApp.Services.Users;
+using WeebApp.Services.Posts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +25,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserPostServices, UserPostServices>();
 builder.Services.AddScoped<IAdminPostServices, AdminPostServices>();
+builder.Services.AddScoped<IPostServices, PostServices>();
 
 //builder.Services.AddScoped<ApplicationDbContext>();
 
