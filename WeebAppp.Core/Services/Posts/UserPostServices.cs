@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WeebApp.Data;
 using WeebApp.Models;
 using WeebApp.Models.Domain;
@@ -6,53 +7,46 @@ using WeebApp.Services.Interfaces;
 
 namespace WeebApp.Services.Posts
 {
-    public class UserPostServices : IUserPostServices
+    public class UserPostServices : BasePostServices, IUserPostServices
     {
-        public ApplicationDbContext _context;
 
-        public UserPostServices(ApplicationDbContext context)
+        public UserPostServices(ApplicationDbContext context):base(context)
         {
-            _context = context;
         }
 
         public List<Post> GetByCreatorId(string authorId)
         {
-            var authorPosts = _context.Posts.Include(p => p.Status).Where(p => p.CreatorId == authorId);
+            var authorPosts = _applicationDbContext.Posts.Include(p => p.Status).Where(p => p.CreatorId == authorId);
             return authorPosts.ToList();
         }
         public Post Details(Guid id)
         {
-            var post = _context.Posts.Include(p => p.Status).FirstOrDefault(p => p.Id == id);
+            var post = _applicationDbContext.Posts.Include(p => p.Status).FirstOrDefault(p => p.Id == id);
             return post;
         }
 
         public Post AddPost(Post post)
         {
-            _context.Posts.Add(post);
-            _context.SaveChanges();
+            _applicationDbContext.Posts.Add(post);
+            _applicationDbContext.SaveChanges();
             return post;
         }
-        public Post GetById(Guid id)
-        {
-            var post = _context.Posts.Find(id);
-            return post;
-        }
-
+  
         public void EditPost(Post post)
         {
-            _context.Update(post);
-            _context.SaveChanges();
+            _applicationDbContext.Update(post);
+            _applicationDbContext.SaveChanges();
         }
 
         public void Delete(Post post)
         {
-            _context.Posts.Remove(post);
-            _context.SaveChanges();
+            _applicationDbContext.Posts.Remove(post);
+            _applicationDbContext.SaveChanges();
 
         }
         public bool PostExists(Guid id)
         {
-            return _context.Posts.Any(e => e.Id == id);
+            return _applicationDbContext.Posts.Any(e => e.Id == id);
         }
     }
 }

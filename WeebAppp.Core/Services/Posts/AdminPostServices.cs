@@ -19,7 +19,7 @@ namespace WeebApp.Services.Posts
 
         public List<Post> GetAll()
         {
-            var posts = _context.Posts.OrderByDescending(p => p.CreatedDate).Where(p => p.StatusId == Enums.StatusEnum.WaitingForApproval).ToList();
+             var posts = _context.Posts.Include(p => p.Status).Where(p => p.StatusId != Enums.StatusEnum.Draft).ToList();
             return posts;
         }
         public Post GetById(Guid id)
