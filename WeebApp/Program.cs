@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WeebApp.Data;
 using WeebApp.Models;
-using WeebApp.Services.Admin;
 using WeebApp.Services.Interfaces;
-using WeebApp.Services.Users;
+using WeebApp.Services.Posts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +25,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserPostServices, UserPostServices>();
 builder.Services.AddScoped<IAdminPostServices, AdminPostServices>();
-
-//builder.Services.AddScoped<ApplicationDbContext>();
-
+builder.Services.AddScoped<IPostServices, PostServices>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -54,7 +51,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "creatorArea",
     pattern: "{area:exists}/{controller=Creator}/{action=Index}/{id?}");
-
 
 app.MapControllerRoute(
     name: "default",

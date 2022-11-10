@@ -15,7 +15,7 @@ using WeebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using WeebApp.Services.Users;
+using WeebApp.Services.Posts;
 using WeebApp.Enums;
 using WeebApp.Services.Interfaces;
 
@@ -123,7 +123,6 @@ namespace WeebApp.Areas.user.Controllers
         public async Task<IActionResult> Edit(Guid id, string submitBtn, [Bind("Id,Name,Text,CreatedDate,CreatorId")] UpdatePostViewModel updatePostVM)
         {
             var post = _userPostServices.GetById(id);
-            // var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (id != updatePostVM.Id)
             {
                 return NotFound();

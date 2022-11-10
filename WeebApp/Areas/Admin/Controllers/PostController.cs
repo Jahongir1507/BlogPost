@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WeebApp.Data;
 using Microsoft.AspNetCore.Authorization;
-using WeebApp.Services.Admin;
+using WeebApp.Services.Posts;
 using WeebApp.Services.Interfaces;
 
 namespace WeebApp.Areas.Admin.Controllers
@@ -20,7 +20,6 @@ namespace WeebApp.Areas.Admin.Controllers
 
         public PostController(IAdminPostServices postServices)
         {
-            //_postServices = new AdminPostServices(context);
             _postServices = postServices;
         }
 
